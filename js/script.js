@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "testimonial-next"
     );
 
-    const faqItems = document.querySelectorAll(".faq-item");
     const revealElements = document.querySelectorAll(".reveal");
 
     let currentTestimonial = 0;
@@ -167,22 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
         startTestimonialAutoplay();
     };
 
-    const updateOpenFaqHeight = () => {
-        const openFaqItem = document.querySelector(".faq-item.open");
-
-        if (!openFaqItem) {
-            return;
-        }
-
-        const answer = openFaqItem.querySelector(".faq-item__answer");
-
-        if (!answer) {
-            return;
-        }
-
-        answer.style.maxHeight = `${answer.scrollHeight}px`;
-    };
-
     if (currentYear) {
         currentYear.textContent = String(
             new Date().getFullYear()
@@ -215,8 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (window.innerWidth > 960) {
                 closeMenu();
             }
-
-            updateOpenFaqHeight();
         }
     );
 
@@ -234,17 +215,29 @@ document.addEventListener("DOMContentLoaded", () => {
         link.addEventListener("click", (event) => {
             event.preventDefault();
 
-            const service =
-                link.dataset.service ||
-                "los servicios de Menstruando Ando";
+            const customMessage = link.dataset.message;
 
-            const message = [
-                "Hola, Menstruando Ando.",
-                "",
-                `Me gustaría recibir información y cotizar ${service}.`,
-                "",
-                "Quedo atento(a) a la información sobre disponibilidad, modalidad y precio."
-            ].join("\n");
+            let message;
+
+            if (customMessage) {
+                message = [
+                    "Hola, Menstruando Ando.",
+                    "",
+                    customMessage
+                ].join("\n");
+            } else {
+                const service =
+                    link.dataset.service ||
+                    "los servicios de Menstruando Ando";
+
+                message = [
+                    "Hola, Menstruando Ando.",
+                    "",
+                    `Me gustaría recibir información y cotizar ${service}.`,
+                    "",
+                    "Quedo atento(a) a la información sobre disponibilidad, modalidad y precio."
+                ].join("\n");
+            }
 
             openWhatsapp(message);
         });
@@ -354,56 +347,6 @@ document.addEventListener("DOMContentLoaded", () => {
             openWhatsapp(message);
         });
     }
-
-    faqItems.forEach((item) => {
-        const button = item.querySelector("button");
-        const answer = item.querySelector(
-            ".faq-item__answer"
-        );
-
-        if (!button || !answer) {
-            return;
-        }
-
-        button.addEventListener("click", () => {
-            const isOpen = item.classList.contains("open");
-
-            faqItems.forEach((otherItem) => {
-                const otherButton =
-                    otherItem.querySelector("button");
-
-                const otherAnswer =
-                    otherItem.querySelector(
-                        ".faq-item__answer"
-                    );
-
-                otherItem.classList.remove("open");
-
-                if (otherButton) {
-                    otherButton.setAttribute(
-                        "aria-expanded",
-                        "false"
-                    );
-                }
-
-                if (otherAnswer) {
-                    otherAnswer.style.maxHeight = null;
-                }
-            });
-
-            if (!isOpen) {
-                item.classList.add("open");
-
-                button.setAttribute(
-                    "aria-expanded",
-                    "true"
-                );
-
-                answer.style.maxHeight =
-                    `${answer.scrollHeight}px`;
-            }
-        });
-    });
 
     if (testimonialPreviousButton) {
         testimonialPreviousButton.addEventListener(
